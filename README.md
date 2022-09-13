@@ -1,6 +1,7 @@
 # pabutools---tools for participatory budgeting
 
-Pabutools provides two submodules: **model** and **rules**.
+Pabutools is a pythonic package providing the implementation of common PB voting rules as well as the Pabulib parser.
+It provides two submodules: **model** and **rules**.
  ## model
  Provides the classes representing voters, candidates and election instances.
   - **Voter(id, sex=None, age=None, subunits=set())** with the following attributes:

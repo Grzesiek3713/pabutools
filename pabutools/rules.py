@@ -1,4 +1,4 @@
-from model import Election
+from .model import Election
 
 def _utilitarian_greedy_internal(e : Election, W):
     costW = sum(c.cost for c in W)
