@@ -1,8 +1,14 @@
+from __future__ import annotations
 from pathlib import Path
 import csv
 
 class Voter:
-    def __init__(self, id, sex=None, age=None, subunits=set()):
+    def __init__(self,
+            id : str,
+            sex : str = None,
+            age : int = None,
+            subunits : set[str] = set()
+            ):
         self.id = id #unique id
         self.sex = sex
         self.age = age
@@ -18,7 +24,12 @@ class Voter:
         return f"v({self.id})"
 
 class Candidate:
-    def __init__(self, id, cost, name=None, subunit=None):
+    def __init__(self,
+            id : str,
+            cost : int,
+            name : str = None,
+            subunit : str = None
+            ):
         self.id = id #unique id
         self.cost = cost
         self.name = name
@@ -34,37 +45,56 @@ class Candidate:
         return f"c({self.id})"
 
 class Election:
-    def __init__(self, voters=set(), profile={}, budget=0, city = None, year = None, subunits = set()):
+    def __init__(self,
+            name : str = '',
+            voters : set[Voter] = set(),
+            profile : dict[Candidate, dict[Voter, int]] = {},
+            budget : int = 0,
+            subunits : set[str] = set()
+            ):
+        self.name = name
         self.voters = voters
         self.profile = profile #dict: candidates -> voters -> score
         self.budget = budget
-        self.city = city
-        self.year = year
         self.subunits = subunits
 
-    def read_from_files(self, pattern): #assumes Pabulib data format
+    def binary_to_cost_utilities(self) -> Election:
+        assert all((self.profile[c][v] == 1) for c in self.profile for v in self.profile[c])
+        for c in self.profile:
+            for v in self.profile[c]:
+                self.profile[c][v] = c.cost
+        return self
+
+    def cost_to_binary_utilities(self) -> Election:
+        assert all((self.profile[c][v] == c.cost) for c in self.profile for v in self.profile[c])
+        for c in self.profile:
+            for v in self.profile[c]:
+                self.profile[c][v] = 1
+        return self
+
+    def read_from_files(self, pattern : str): #assumes Pabulib data format
         for filename in Path(".").glob(pattern):
             cand_id_to_obj = {}
             with open(filename, 'r', newline='', encoding="utf-8") as csvfile:
-                meta = {}
                 section = ""
                 header = []
                 reader = csv.reader(csvfile, delimiter=';')
                 subunit = None
+                meta = {}
                 for i, row in enumerate(reader):
+                    if len(row) == 0: #skip empty lines
+                        continue
                     if str(row[0]).strip().lower() in ["meta", "projects", "votes"]:
                         section = str(row[0]).strip().lower()
                         header = next(reader)
                     elif section == "meta":
-                        if row[0] == "subunit":
-                            subunit = row[1].strip()
+                        field, value  = row[0], row[1].strip()
+                        meta[field] = value
+                        if field == "subunit":
+                            subunit = value
                             self.subunits.add(subunit)
-                        if row[0] == "budget":
-                            budget_str = row[1].strip()
-                            if "," in budget_str:
-                                self.budget += int(budget_str.split(",")[0]) + 1
-                            else:
-                                self.budget += int(budget_str)
+                        if field == "budget":
+                            self.budget += int(value.split(",")[0])
                     elif section == "projects":
                         project = {}
                         for it, key in enumerate(header[1:]):
@@ -83,12 +113,17 @@ class Election:
                         v = Voter(v_id, v_sex, v_age)
                         self.voters.add(v)
                         v_vote = [cand_id_to_obj[c_id] for c_id in vote["vote"].split(",")]
-
-                        for c in v_vote:
-                            self.profile[c][v] = 1
+                        v_points = [1 for c in v_vote]
+                        if meta["vote_type"] == "ordinal":
+                            v_points = [int(meta["max_length"]) - i for i in range(len(v_vote))]
+                        elif "points" in vote:
+                            v_points = [int(points) for points in vote["points"].split(",")]
+                        v_vote_points = zip(v_vote, v_points)
+                        for (vote, points) in v_vote_points:
+                            self.profile[vote][v] = points
 
         for c in set(c for c in self.profile):
-            if len(self.profile[c]) == 0: #nobody voted for the project; usually means the project was withdrawn
+            if sum(self.profile[c].values()) == 0: #nobody voted for the project; usually means the project was withdrawn
                 del self.profile[c]
 
         return self
