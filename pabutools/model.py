@@ -46,17 +46,17 @@ class Candidate:
 
 class Election:
     def __init__(self,
-            name : str = '',
-            voters : set[Voter] = set(),
-            profile : dict[Candidate, dict[Voter, int]] = {},
+            name : str = None,
+            voters : set[Voter] = None,
+            profile : dict[Candidate, dict[Voter, int]] = None,
             budget : int = 0,
-            subunits : set[str] = set()
+            subunits : set[str] = None
             ):
         self.name = name
-        self.voters = voters
-        self.profile = profile #dict: candidates -> voters -> score
+        self.voters = voters if voters else set()
+        self.profile = profile if profile else {} #dict: candidates -> voters -> score
         self.budget = budget
-        self.subunits = subunits
+        self.subunits = subunits if subunits else set()
 
     def binary_to_cost_utilities(self) -> Election:
         assert all((self.profile[c][v] == 1) for c in self.profile for v in self.profile[c])
@@ -123,7 +123,7 @@ class Election:
                             self.profile[vote][v] = points
 
         for c in set(c for c in self.profile):
-            if sum(self.profile[c].values()) == 0: #nobody voted for the project; usually means the project was withdrawn
+            if c.cost > self.budget and sum(self.profile[c].values()) == 0: #nobody voted for the project; usually means the project was withdrawn
                 del self.profile[c]
 
         return self

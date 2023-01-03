@@ -13,7 +13,7 @@ Pabutools provides two submodules: **model** and **rules**.
 	- cost: a natural number,
 	- name: string or None (no information),
 	- subunit: string or None (no information or a citywide project).
-  - **Election(voters=set(), profile={}, budget=0, country = None, unit = None, subunits = set(), year = None)** with the following attributes:
+  - **Election(name=None, voters=None, profile=None, budget=0, subunits = None)** with the following attributes:
 	- voters: a set of Voter instances,
 	- profile: a dict where keys are Candidate instances and values are dicts in which keys are Voter instances and values are natural numbers (voters' utilities over candidates; if a voter has utility 0, she can be skipped),
 	- budget: a natural number,
