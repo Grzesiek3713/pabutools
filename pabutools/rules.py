@@ -1,4 +1,5 @@
 from .model import Election, Candidate, Voter
+import math
 
 
 ###############################################################################
@@ -102,10 +103,10 @@ def _mes_internal(e : Election, real_budget : int = 0) -> (dict[Voter, float], s
 
 def _is_exhaustive(e : Election, W : set[Candidate]) -> bool:
     costW = sum(c.cost for c in W)
-    minRemainingCost = min(c.cost for c in e.profile if c not in W)
+    minRemainingCost = min([c.cost for c in e.profile if c not in W], default=math.inf)
     return costW + minRemainingCost > e.budget
 
-def equal_shares(e : Election, completion : str = 'binsearch') -> set[Candidate]:
+def equal_shares(e : Election, completion : str = None) -> set[Candidate]:
     endow, W = _mes_internal(e)
     if completion is None:
         return W
