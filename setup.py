@@ -3,7 +3,7 @@ from pathlib import Path
 this_directory = Path(__file__).parent
 
 setup(name='pabutools',
-      version='0.7',
+      version='0.8',
       description='Implementation of PB voting rules and tools for reading Pabulib datasets',
       long_description=(this_directory / "README.md").read_text(),
       long_description_content_type='text/markdown',

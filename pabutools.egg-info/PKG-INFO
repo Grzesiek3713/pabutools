@@ -1,3 +1,14 @@
+Metadata-Version: 2.1
+Name: pabutools
+Version: 0.8
+Summary: Implementation of PB voting rules and tools for reading Pabulib datasets
+Home-page: UNKNOWN
+Author-email: g.pierczynski@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
 # pabutools---tools for participatory budgeting
 
 Pabutools provides two submodules: **model** and **rules**.
@@ -34,3 +45,5 @@ Provides the implementation of a number of voting rules for PB. All the methods 
            - 'add1_utilitarian': similarly as in add1 completion, but if the outcome is still not exhaustive, it is completed by utilitarian greedy.
 	 - 'utilitarian_greedy': the completion with utilitarian_greedy.
 	 - 'phragmen': the completion with the Phragmen's Sequential Method.
+
+
