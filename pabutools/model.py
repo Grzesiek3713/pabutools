@@ -60,16 +60,22 @@ class Election:
 
     def binary_to_cost_utilities(self) -> Election:
         assert all((self.profile[c][v] == 1) for c in self.profile for v in self.profile[c])
-        for c in self.profile:
-            for v in self.profile[c]:
-                self.profile[c][v] = c.cost
-        return self
+        return self.score_to_cost_utilities()
 
     def cost_to_binary_utilities(self) -> Election:
         assert all((self.profile[c][v] == c.cost) for c in self.profile for v in self.profile[c])
+        return self.cost_to_score_utilities()
+
+    def score_to_cost_utilities(self) -> Election:
         for c in self.profile:
             for v in self.profile[c]:
-                self.profile[c][v] = 1
+                self.profile[c][v] *= c.cost
+        return self
+
+    def cost_to_score_utilities(self) -> Election:
+        for c in self.profile:
+            for v in self.profile[c]:
+                self.profile[c][v] /= c.cost * 1.0
         return self
 
     def read_from_files(self, pattern : str): #assumes Pabulib data format

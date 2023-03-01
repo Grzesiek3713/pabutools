@@ -23,6 +23,9 @@ Pabutools provides two submodules: **model** and **rules**.
 	- read_from_file(pattern): takes as an input the pattern of the filepaths of Pabulib files and fills the data of the newly created Election instance with them (e.g. calling Election().read_from_files('pabulib/poland_warszawa_2021*') will create a PB election out of all Pabulib files under the provided path starting with 'poland_warszawa_2021'). If the pattern fits more than one file, they should all be from the same country, unit and year. By default, approval utilities are considered to be binary.
 	- cost_to_binary_utilities(): if the utilities are cost utilities, they are converted to binary
 	- binary_to_cost_utilities(): if the utilities are binary, they are converted to cost utilities
+    - cost_to_score_utilities(): if the utilities are cost utilities, they are converted to score utilities
+	- score_to_cost_utilities(): if the utilities are score utilities, they are converted to cost utilities
+
  ## rules
 Provides the implementation of a number of voting rules for PB. All the methods take as an argument an election instance and return a set of elected candidates.
  - **utilitarian_greedy(e : Election)**: the simple greedy algorithm,
@@ -31,6 +34,6 @@ Provides the implementation of a number of voting rules for PB. All the methods 
 	 - None: no completion (default option).
 	 - 'binsearch': initial endowments of the voters are set to maximize the exhaustiveness of the elected committee with the use of binary search.
 	 - 'add1': initial endowments of the voters are increased similarly as above so that the committee is as exhaustive as possible; instead of using binary search, we keep increasing voters' endowments by 1 unit until the outcome is exhaustive or we exceed the original budget.
-           - 'add1_utilitarian': similarly as in add1 completion, but if the outcome is still not exhaustive, it is completed by utilitarian greedy.
+	 - 'add1_utilitarian': similarly as in add1 completion, but if the outcome is still not exhaustive, it is completed by utilitarian greedy.
 	 - 'utilitarian_greedy': the completion with utilitarian_greedy.
 	 - 'phragmen': the completion with the Phragmen's Sequential Method.
